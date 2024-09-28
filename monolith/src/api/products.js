@@ -9,7 +9,7 @@ module.exports = (app) => {
     app.post('/product/create', async (req, res, next) => {
         const {
             name,
-            desc,
+            description,
             type,
             unit,
             price,
@@ -21,7 +21,7 @@ module.exports = (app) => {
             data
         } = await service.CreateProduct({
             name,
-            desc,
+            description,
             type,
             unit,
             price,

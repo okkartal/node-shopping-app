@@ -5,7 +5,7 @@ const {
 class ProductRepository {
     async CreateProduct({
         name,
-        desc,
+        description,
         type,
         unit,
         price,
@@ -15,7 +15,7 @@ class ProductRepository {
     }) {
         const product = new ProductModel({
             name,
-            desc,
+            description,
             type,
             unit,
             price,

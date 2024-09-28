@@ -8,7 +8,7 @@ module.exports = (app) => {
     app.post('/create', async (req, res, next) => {
         const {
             name,
-            desc,
+            description,
             type,
             unit,
             price,
@@ -20,7 +20,7 @@ module.exports = (app) => {
             data
         } = await service.CreateProduct({
             name,
-            desc,
+            description,
             type,
             unit,
             price,
@@ -67,7 +67,7 @@ module.exports = (app) => {
         )
         //get payload to send customer service
         PublishCustomerEvent(data);
-        return res.status(200).json(data.data.product);
+        return res.status(200).json(data.data);
     });
 
     app.delete('/wishlist/:id', UserAuth, async (req, res, next) => {
@@ -82,7 +82,7 @@ module.exports = (app) => {
         )
 
         PublishCustomerEvent(data);
-        return res.status(200).json(data.data.product);
+        return res.status(200).json(data.data);
     });
 
     app.put('/cart', UserAuth, async (req, res, next) => {
@@ -98,7 +98,7 @@ module.exports = (app) => {
         PublishShoppingEvent(data);
 
         const response = {
-            product: data.data.product,
+            product: data.data?.product,
             unit: data.data.quantity
         };
 
@@ -120,7 +120,7 @@ module.exports = (app) => {
         PublishShoppingEvent(data);
 
         const response = {
-            product: data.data.product,
+            product: data.data?.product,
             unit: data.data.quantity
         };
 

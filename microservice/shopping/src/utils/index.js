@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 require('dotenv').config();
 
 module.exports.GenerateSalt = async () => {
@@ -42,3 +43,11 @@ module.exports.FormateData = (data) => {
     }
     return { msg:'Data Not Found'};
 }
+
+module.exports.PublishCustomerEvent = async(payload) => {
+    axios.post(`${process.env.CUSTOMER_SERVICE_URI}/app-events`, {
+        payload
+    });
+    //Perform some operations
+}
+

@@ -130,7 +130,7 @@ class CustomerService {
     }
 
     async SubscribeEvents(payload) {
-        const {
+         const {
             event,
             data
         } = payload;

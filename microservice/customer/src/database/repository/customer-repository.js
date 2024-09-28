@@ -73,10 +73,10 @@ class CustomerRepository {
         return profile.wishList;
     }
 
-    async AddWishListItem(customerId, { _id, name, price, available, banner }) {
+    async AddWishListItem(customerId, { _id, name, description, price, available, banner }) {
 
         const product = {
-            _id, name, desc, price, available, banner
+            _id, name, description, price, available, banner
         };
 
         const profile = await CustomerModel.findById(customerId)
@@ -110,9 +110,9 @@ class CustomerRepository {
         return profileResult.wishList;
     }
 
-    async AddCartItem(customerId, { _id, name, desc, price, available, banner }, unit, isRemove) {
+    async AddCartItem(customerId, { _id, name, description, price, available, banner }, unit, isRemove) {
 
-        const product = { _id, name, desc, price, available, banner };
+        const product = { _id, name, description, price, available, banner };
 
         const profile = await CustomerModel.findById(customerId)
             .populate('cart');

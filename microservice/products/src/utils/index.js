@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const axios  = require('axios');
+const amqplib = require('amqplib');
+const { EXCHANGE_NAME, MESSAGE_BROKER_URI, APP_SECRET, QUEUE_NAME } = require('../config');
 
 require('dotenv').config();
 
@@ -21,7 +22,7 @@ module.exports.ValidatePassword = async (
 }
 
 module.exports.GenerateSignature = async (payload) => {
-    return jwt.sign(payload, process.env.APP_SECRET, {
+    return jwt.sign(payload, APP_SECRET, {
         expiresIn: '30d'
     });
 }
@@ -31,7 +32,7 @@ module.exports.ValidateSignature = async (req) => {
 
     if (!signature) return false;
 
-    const payload = await jwt.verify(signature.split(' ')[1], process.env.APP_SECRET);
+    const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET);
     req.user = payload;
     return true;
 }
@@ -45,17 +46,26 @@ module.exports.FormateData = (data) => {
     return { msg:'Data Not Found'};
 }
 
+/***********************MESSAGE BROKER *************** */
 
-module.exports.PublishCustomerEvent = async(payload) => {
-    axios.post(`${process.env.CUSTOMER_SERVICE_URI}/app-events`, {
-        payload
-    });
-    //Perform some operations
-}
+//Create a channel
+module.exports.CreateChannel = async () => {
+    try {
+        const connection = await amqplib.connect(MESSAGE_BROKER_URI);
+        const channel = await connection.createChannel();
+        await channel.assertQueue(EXCHANGE_NAME, 'direct', { durable: true });
+        return channel;
+    } catch(err){
+        throw err;
+    }
+};
 
-module.exports.PublishShoppingEvent = async(payload) => {
-    axios.post(`${process.env.SHOPPING_SERVICE_URI}/app-events`, {
-        payload
-    });
-    //perform some operations
-}
+//Publish messages
+module.exports.PublishMessage = async (channel, binding_key, message) => {
+     try {
+        await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(JSON.stringify(message)));
+        console.log(`Message sent to ${binding_key} service: ${JSON.stringify(message)}`);
+     } catch(err){
+        throw err;
+     }
+};

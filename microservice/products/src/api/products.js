@@ -1,8 +1,9 @@
+const { CUSTOMER_BINDING_KEY, SHOPPING_BINDING_KEY } = require('../config');
 const ProductService = require('../services/product-service');
-const { PublishCustomerEvent, PublishShoppingEvent } = require('../utils');
+const { PublishMessage } = require('../utils');
 const UserAuth = require('./middlewares/auth');
 
-module.exports = (app) => {
+module.exports = (app, channel) => {
     const service = new ProductService();
 
     app.post('/create', async (req, res, next) => {
@@ -66,7 +67,7 @@ module.exports = (app) => {
             { productId: req.body._id }, 'ADD_TO_WISHLIST'
         )
         //get payload to send customer service
-        PublishCustomerEvent(data);
+        PublishMessage(channel, CUSTOMER_BINDING_KEY, data);
         return res.status(200).json(data.data);
     });
 
@@ -81,7 +82,7 @@ module.exports = (app) => {
             { productId }, 'REMOVE_FROM_WISHLIST'
         )
 
-        PublishCustomerEvent(data);
+        PublishMessage(channel, CUSTOMER_BINDING_KEY, data);
         return res.status(200).json(data.data);
     });
 
@@ -94,8 +95,8 @@ module.exports = (app) => {
             { productId: req.body._id, quantity: req.body.quantity }, 'ADD_TO_CART'
         )
 
-        PublishCustomerEvent(data);
-        PublishShoppingEvent(data);
+        PublishMessage(channel, CUSTOMER_BINDING_KEY, data);
+        PublishMessage(channel, SHOPPING_BINDING_KEY, data);
 
         const response = {
             product: data.data?.product,
@@ -116,8 +117,8 @@ module.exports = (app) => {
             { productId }, 'REMOVE_FROM_CART'
         )
 
-        PublishCustomerEvent(data);
-        PublishShoppingEvent(data);
+        PublishMessage(channel, CUSTOMER_BINDING_KEY, data);
+        PublishMessage(channel, SHOPPING_BINDING_KEY, data);
 
         const response = {
             product: data.data?.product,

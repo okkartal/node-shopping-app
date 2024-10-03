@@ -2,10 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const {
     products,
-    appEvents
 } = require('./api');
 
-module.exports = async (app) => {
+module.exports = async (app, channel) => {
     app.use(express.json({
         limit: '1mb'
     }));
@@ -16,8 +15,6 @@ module.exports = async (app) => {
     app.use(cors());
     app.use(express.static(__dirname + '/public'));
 
-   appEvents(app);
-
     //api
-    products(app);
+    products(app, channel);
 }

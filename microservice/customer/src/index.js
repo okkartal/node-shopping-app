@@ -1,7 +1,7 @@
 const express = require('express');
-require('dotenv').config();
 const { databaseConnection } = require('./database');
 const expressApp = require('./express-app');
+const { PORT } = require('./config');
 
 const StartServer = async() => {
     const app = express();
@@ -10,8 +10,8 @@ const StartServer = async() => {
 
     await expressApp(app);
 
-    app.listen(process.env.PORT, () => {
-        console.log(`listening to port ${process.env.PORT}`);
+    app.listen(PORT, () => {
+        console.log(`listening to port ${PORT}`);
     })
     .on('error', (err) => {
         console.log(err);

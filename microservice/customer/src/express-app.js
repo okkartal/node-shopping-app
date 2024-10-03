@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const {
     customer,
-    appEvents
 } = require('./api');
+const { CreateChannel } = require('./utils');
 
 module.exports = async (app) => {
     app.use(express.json({
@@ -16,10 +16,8 @@ module.exports = async (app) => {
     app.use(cors());
     app.use(express.static(__dirname + '/public'));
 
-    //Listen to events
-    appEvents(app);
-
+    const channel = await CreateChannel();
     //api
-    customer(app);
+    customer(app, channel);
 }
 
